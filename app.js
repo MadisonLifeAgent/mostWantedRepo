@@ -84,10 +84,53 @@ function searchByName(people){
 
 //unfinished function to search through an array of people to find matching eye colors. Use searchByName as reference.
 function searchByEyeColor(people){
+  let eyeColor = promptFor("What is the person's eye color?", autoValid);
 
+  let foundEyeColor = people.filter(function(potentialMatch){
+    if(potentialMatch.eyeColor === eyeColor){
+      return true;
+    }
+    else{
+      return false;
+    }
+  })
+  // TODO: find the person single person object using the name they entered.
+  return eyeColor;
 }
 
 //TODO: add other trait filter functions here.
+
+//function to search through an array of people to find matching genders.
+function searchByGender(people){
+  let gender = promptFor("What is the person's gender?", autoValid);
+
+  let foundGender = people.filter(function(potentialMatch){
+    if(potentialMatch.gender === gender){
+      return true;
+    }
+    else{
+      return false;
+    }
+  })
+  // TODO: find the person single person object using the name they entered.
+  return gender;
+}
+
+//Function to search through an array of people to find matching Date of Birth
+function searchByDOB(people){
+  let dOB = promptFor("What is the person's date of birth?", autoValid);
+
+  let foundDOB = people.filter(function(potentialMatch){
+    if(potentialMatch.dOB === dOB){
+      return true;
+    }
+    else{
+      return false;
+    }
+  })
+  // TODO: find the person single person object using the name they entered.
+  return dOB;
+}
 
 
 
