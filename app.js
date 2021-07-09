@@ -174,6 +174,74 @@ function searchById(people){
   return possiblePerson;
 }
 
+// Function to search by height
+function searchByHeight(people){
+  let personsHeight = promptFor("Enter a height (inches)", autoValid);
+
+  // convert user input from string to number
+  let personsHeightNumber = parseInt(personsHeight);
+
+  // Filter through for matching heights and store results in object array
+  let foundHeight = people.filter(function(potentialMatch){
+    if(potentialMatch.height === personsHeightNumber){
+      return potentialMatch;
+    }
+  })
+
+  // call display function
+  displayPerson(foundHeight);
+
+  // debug/testing lines (next two lines)
+  //   console.log(foundHeight);
+  // return foundId;
+}
+
+
+// Function to search by weight
+function searchByWeight(people){
+  let personsWeight = promptFor("Enter a weight (pounds)", autoValid);
+
+  // convert user input from string to number
+  let personsWeightNumber = parseInt(personsWeight);
+
+  // Filter through for matching heights and store results in object array
+  let foundWeight = people.filter(function(potentialMatch){
+    if(potentialMatch.weight === personsWeightNumber){
+      return potentialMatch;
+    }
+  })
+
+  // call display function
+  displayPerson(foundWeight);
+
+  // debug testing lines
+  // console.log(foundWeight);
+  // return foundWeight;
+}
+
+// Function to search by spouse id
+function searchBySpouseId(people){
+  let personsSpouseId = promptFor("Enter a person's spouse ID number", autoValid);
+
+  // convert user input from string to number
+  let personsSpouseNumberId = parseInt(personsSpouseId);
+
+  // Filter through for matching spouse IDs but return the person you want, not the spouse
+  let potentialMatchNotSpouse = people.filter(function(potentialMatch){
+    if(potentialMatch.currentSpouse === personsSpouseNumberId){
+      // return the foundSpouse's spouse since they are actually the person you are searching for
+      return potentialMatch;
+    }
+
+  })
+  // call display function
+  displayPerson(foundSpouse);
+
+  // debut/testing lines
+  // console.log(potentialMatchNotSpouse);
+  // return foundSpouse;
+}
+
 //#endregion
 
 //Display functions.
