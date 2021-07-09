@@ -18,8 +18,8 @@ function app(people){
       // TODO: search by traits
             // if they answer no prompt start to ask user for search criteria (call a function here)
             let defaultSearch = searchById(data);
-      break;
-      default:
+      // break;
+      // default:
     app(people); // restart app
       break;
   }
@@ -56,17 +56,42 @@ function mainMenu(person, people){
     
     case "family":
     // TODO: get person's family
+    //This will find spouse ID and print name accordingly
     let spouseID = person.currentSpouse;
     let foundSpouse = people.filter(function(potentialMatch){
       if(potentialMatch.id === spouseID){
         return true;
       }
       else{
-        return false
+        return false;
       }
     })
     foundSpouse = foundSpouse[0];
     let spouseName = `${foundSpouse.firstName} ${foundSpouse.lastName}`;
+    
+    //this will find parents of person
+    let parentIDArray = person.parents;
+    let parent1 = "";
+    let parent2 = "";
+    //if person has 2 parents
+    if(parentIDArray.length == 2){
+      let foundParents = people.filter(function(potentialMatch){
+        if(potentialMatch.id === parentIDArray[0] || potentialMatch.id === parentIDArray[1]){
+          return true;
+        }
+        else{
+          return false;
+        }
+      })
+      
+    }
+    //if person only has 1 parent
+    else if(parentIDArray.length == 1){
+
+    }
+    else{
+
+    }
     let familyResponse = promptFor(`${person.firstName} ${person.lastName}'s family: \nSpouse: ${spouseName} \nWould you like to go back 'yes' or 'no'? `,autoValid);
     
     //if user says 'yes', they will return to main menu prompt
@@ -130,7 +155,7 @@ function searchByEyeColor(people){
     }
   })
   // TODO: find the person single person object using the name they entered.
-  return foundEyeColor;
+  return eyeColor;
 }
 
 //TODO: add other trait filter functions here.
@@ -148,15 +173,15 @@ function searchByGender(people){
     }
   })
   // TODO: find the person single person object using the name they entered.
-  return foundGender;
+  return gender;
 }
 
 //Function to search through an array of people to find matching Date of Birth
 function searchByDOB(people){
   let dOB = promptFor("What is the person's date of birth?", autoValid);
 
-  let foundDob = people.filter(function(potentialMatch){
-    if(potentialMatch.dob === dOB){
+  let foundDOB = people.filter(function(potentialMatch){
+    if(potentialMatch.dOB === dOB){
       return true;
     }
     else{
@@ -164,7 +189,7 @@ function searchByDOB(people){
     }
   })
   // TODO: find the person single person object using the name they entered.
-  return foundDob;
+  return dOB;
 }
 
 function searchByOccupation(people){
@@ -179,7 +204,7 @@ function searchByOccupation(people){
     }
   }) 
   // TODO: find the person single person object using the name they entered.
-  return foundOccupation;
+  return occupation;
 }
 
 // Function to search through an array of people to find matching ID then out put their name
@@ -192,12 +217,13 @@ function searchById(people){
   // filter through for matching id
   let possiblePerson = people.filter(function(potentialMatch){
     if(potentialMatch.id === personsIdNumber){
-      return true;
-    }
-    else {
-      return false;
+      return potentialMatch;
+      // return potentialMatch.firstName + " " + potentialMatch.lastName;
     }
   })
+
+  // call display function
+  displayPerson(possiblePerson);
 
   return possiblePerson;
 }
@@ -212,14 +238,16 @@ function searchByHeight(people){
   // Filter through for matching heights and store results in object array
   let foundHeight = people.filter(function(potentialMatch){
     if(potentialMatch.height === personsHeightNumber){
-      return true;
-    }
-    else {
-      return false;
+      return potentialMatch;
     }
   })
 
-  return foundHeight;
+  // call display function
+  displayPerson(foundHeight);
+
+  // debug/testing lines (next two lines)
+  //   console.log(foundHeight);
+  // return foundId;
 }
 
 
@@ -233,13 +261,16 @@ function searchByWeight(people){
   // Filter through for matching heights and store results in object array
   let foundWeight = people.filter(function(potentialMatch){
     if(potentialMatch.weight === personsWeightNumber){
-      return true;
-    }
-    else {
-      return false;
+      return potentialMatch;
     }
   })
-  return foundWeight;
+
+  // call display function
+  displayPerson(foundWeight);
+
+  // debug testing lines
+  // console.log(foundWeight);
+  // return foundWeight;
 }
 
 // Function to search by spouse id
@@ -253,35 +284,17 @@ function searchBySpouseId(people){
   let potentialMatchNotSpouse = people.filter(function(potentialMatch){
     if(potentialMatch.currentSpouse === personsSpouseNumberId){
       // return the foundSpouse's spouse since they are actually the person you are searching for
-      return true;
-    }
-    else {
-      return false;
+      return potentialMatch;
     }
 
   })
-  return potentialMatchNotSpouse;
+  // call display function
+  displayPerson(foundSpouse);
+
+  // debut/testing lines
+  // console.log(potentialMatchNotSpouse);
+  // return foundSpouse;
 }
-
-// Function to search by parent ids
-function searchByParentId(people){
-  let parentsId = promptFor("Enter the ID number of a Parent for the person you would like to find", autoValid);
-
-  // convert user input from string to number
-  let parentsIdNumber = parseInt(parentsId);
-
-  // filter through for matching parent but return the potenticalmatches you want, not the parent
-  let potentialMatchNotParent = people.filter(function(potentialMatch){
-    if(potentialMatch.parents[0] === parentsIdNumber || potentialMatch.parents[1] === parentsIdNumber){
-      return true;
-    }
-    else {
-      return false;
-    }
-  })
-  return potentialMatchNotParent;
-}
-
 
 //#endregion
 
