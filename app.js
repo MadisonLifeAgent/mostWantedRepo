@@ -44,7 +44,7 @@ function mainMenu(person, people){
     case "info":
     // TODO: get person's info
     promptFor(`${person.firstName} ${person.lastName}'s info: \nGender: ${person.gender} \nDate of Birth: ${person.dob} \nHeight: ${person.height} \nWeight: ${person.weight} \nEye color: ${person.eyeColor} \nOccupation: ${person.occupation}`);
-    mainMenu(person)
+    mainMenu(person, people);
     break;
     case "family":
     // TODO: get person's family
