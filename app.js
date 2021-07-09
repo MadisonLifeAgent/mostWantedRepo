@@ -16,8 +16,10 @@ function app(people){
       break;
     case 'no':
       // TODO: search by traits
-      break;
-      default:
+            // if they answer no prompt start to ask user for search criteria (call a function here)
+            let defaultSearch = searchById(data);
+      // break;
+      // default:
     app(people); // restart app
       break;
   }
@@ -147,6 +149,26 @@ function searchByOccupation(people){
   return occupation;
 }
 
+// Function to search through an array of people to find matching ID then out put their name
+function searchById(people){
+  let personsId = promptFor("Enter an ID number:", autoValid);
+
+  // convert user input from string to number
+  let personsIdNumber = parseInt(personsId);
+
+  // filter through for matching id
+  let possiblePerson = people.filter(function(potentialMatch){
+    if(potentialMatch.id === personsIdNumber){
+      return potentialMatch;
+      // return potentialMatch.firstName + " " + potentialMatch.lastName;
+    }
+  })
+
+  // call display function
+  displayPerson(possiblePerson);
+
+  return possiblePerson;
+}
 
 //#endregion
 
