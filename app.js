@@ -43,9 +43,12 @@ function mainMenu(person, people){
   switch(displayOption){
     case "info":
     // TODO: get person's info
+    promptFor(`${person.firstName} ${person.lastName}'s info: \nGender: ${person.gender} \nDate of Birth: ${person.dob} \nHeight: ${person.height} \nWeight: ${person.weight} \nEye color: ${person.eyeColor} \nOccupation: ${person.occupation}`);
+    mainMenu(person)
     break;
     case "family":
     // TODO: get person's family
+    promptFor
     break;
     case "descendants":
     // TODO: get person's descendants
@@ -81,6 +84,7 @@ function searchByName(people){
     }
   })
   // TODO: find the person single person object using the name they entered.
+  foundPerson = foundPerson[0];
   return foundPerson;
 }
 
