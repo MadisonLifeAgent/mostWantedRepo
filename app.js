@@ -247,6 +247,29 @@ function searchBySpouseId(people){
   // return foundSpouse;
 }
 
+// Function to search by parent ids
+function searchByParentId(people){
+  let parentsId = promptFor("Enter the ID number of a Parent for the person you would like to find", autoValid);
+
+  // convert user input from string to number
+  let parentsIdNumber = parseInt(parentsId);
+
+  // filter through for matching parent but return the potenticalmatches you want, not the parent
+  let potentialMatchNotParent = people.filter(function(potentialMatch){
+    if(potentialMatch.parents[0] === parentsIdNumber || potentialMatch.parents[1] === parentsIdNumber){
+      return potentialMatch;
+    }
+  })
+
+  // call display function
+  // displayPerson(potentialMatchNotParent);
+
+  // debut/testing lines
+  // console.log(potentialMatchNotParent);
+  // return potentialMatchNotParent;
+}
+
+
 //#endregion
 
 //Display functions.
