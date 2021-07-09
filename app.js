@@ -132,6 +132,11 @@ function searchByDOB(people){
   return dOB;
 }
 
+function searchByOccupation(people){
+  let occupation = promptFor("What is the person's occupation?", autoValid){
+    if(potentialMatch.occupation)
+  }
+}
 
 
 //#endregion
