@@ -167,11 +167,10 @@ function searchById(people){
       // return potentialMatch.firstName + " " + potentialMatch.lastName;
     }
   })
-
   // call display function
   displayPerson(possiblePerson);
-
-  return possiblePerson;
+  
+  // return possiblePerson;
 }
 
 // Function to search by height
@@ -187,12 +186,11 @@ function searchByHeight(people){
       return potentialMatch;
     }
   })
-
   // call display function
   displayPerson(foundHeight);
 
   // debug/testing lines (next two lines)
-  //   console.log(foundHeight);
+  // console.log(foundHeight);
   // return foundId;
 }
 
@@ -210,7 +208,6 @@ function searchByWeight(people){
       return potentialMatch;
     }
   })
-
   // call display function
   displayPerson(foundWeight);
 
@@ -232,7 +229,6 @@ function searchBySpouseId(people){
       // return the foundSpouse's spouse since they are actually the person you are searching for
       return potentialMatch;
     }
-
   })
   // call display function
   displayPerson(foundSpouse);
@@ -240,6 +236,28 @@ function searchBySpouseId(people){
   // debut/testing lines
   // console.log(potentialMatchNotSpouse);
   // return foundSpouse;
+}
+
+// Function to search by parent ids
+function searchByParentId(people){
+  let parentsId = promptFor("Enter the ID number of a Parent for the person you would like to find", autoValid);
+
+  // convert user input from string to number
+  let parentsIdNumber = parseInt(parentsId);
+
+  // filter through for matching parent but return the potenticalmatches you want, not the parent
+  let potentialMatchNotParent = people.filter(function(potentialMatch){
+    if(potentialMatch.id === parentsIdNumber){
+      return potentialMatch;
+    }
+  })
+
+  // call display function
+  displayPerson(potentialMatchNotParent);
+
+  // debut/testing lines
+  // console.log(potentialMatchNotParent);
+  // return potentialMatchNotParent;
 }
 
 //#endregion
