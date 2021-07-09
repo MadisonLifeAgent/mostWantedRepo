@@ -215,6 +215,28 @@ function searchByWeight(people){
   // return foundWeight;
 }
 
+// Function to search by spouse id
+function searchBySpouseId(people){
+  let personsSpouseId = promptFor("Enter a person's spouse ID number", autoValid);
+
+  // convert user input from string to number
+  let personsSpouseNumberId = parseInt(personsSpouseId);
+
+  // Filter through for matching spouse IDs but return the person you want, not the spouse
+  let potentialMatchNotSpouse = people.filter(function(potentialMatch){
+    if(potentialMatch.currentSpouse === personsSpouseNumberId){
+      // return the foundSpouse's spouse since they are actually the person you are searching for
+      return potentialMatch;
+    }
+
+  })
+  // call display function
+  displayPerson(foundSpouse);
+
+  // debut/testing lines
+  // console.log(potentialMatchNotSpouse);
+  // return foundSpouse;
+}
 
 //#endregion
 
