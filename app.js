@@ -43,18 +43,42 @@ function mainMenu(person, people){
   switch(displayOption){
     case "info":
     // TODO: get person's info
-    let response = promptFor(`${person.firstName} ${person.lastName}'s info: \nGender: ${person.gender} \nDate of Birth: ${person.dob} \nHeight: ${person.height} \nWeight: ${person.weight} \nEye color: ${person.eyeColor} \nOccupation: ${person.occupation} \nWould you like to go back 'yes' or 'no'?`, autoValid);
-    if(response === "yes"){
+    let infoResponse = promptFor(`${person.firstName} ${person.lastName}'s info: \nGender: ${person.gender} \nDate of Birth: ${person.dob} \nHeight: ${person.height} \nWeight: ${person.weight} \nEye color: ${person.eyeColor} \nOccupation: ${person.occupation} \nWould you like to go back 'yes' or 'no'?`, autoValid);
+    //if user says 'yes', they will return to main menu prompt
+    if(infoResponse === "yes"){
       return mainMenu(person, people);
     }
-    else if(response === "no"){
+    //if user says 'no', they will exit prompt
+    else if(infoResponse === "no"){
       return;
     }
     break;
+    
     case "family":
     // TODO: get person's family
-    promptFor
+    let spouseID = person.currentSpouse;
+    let foundSpouse = people.filter(function(potentialMatch){
+      if(potentialMatch.id === spouseID){
+        return true;
+      }
+      else{
+        return false
+      }
+    })
+    foundSpouse = foundSpouse[0];
+    let spouseName = `${foundSpouse.firstName} ${foundSpouse.lastName}`;
+    let familyResponse = promptFor(`${person.firstName} ${person.lastName}'s family: \nSpouse: ${spouseName} \nWould you like to go back 'yes' or 'no'? `,autoValid);
+    
+    //if user says 'yes', they will return to main menu prompt
+    if(familyResponse === "yes"){
+      return mainMenu(person, people);
+    }
+    //if user says 'no', they will exit prompt
+    else if(familyResponse === "no"){
+      return;
+    }
     break;
+    
     case "descendants":
     // TODO: get person's descendants
     break;
