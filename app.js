@@ -18,8 +18,8 @@ function app(people){
       // TODO: search by traits
             // if they answer no prompt start to ask user for search criteria (call a function here)
             let defaultSearch = searchById(data);
-      // break;
-      // default:
+      break;
+      default:
     app(people); // restart app
       break;
   }
@@ -130,7 +130,7 @@ function searchByEyeColor(people){
     }
   })
   // TODO: find the person single person object using the name they entered.
-  return eyeColor;
+  return foundEyeColor;
 }
 
 //TODO: add other trait filter functions here.
@@ -148,15 +148,15 @@ function searchByGender(people){
     }
   })
   // TODO: find the person single person object using the name they entered.
-  return gender;
+  return foundGender;
 }
 
 //Function to search through an array of people to find matching Date of Birth
 function searchByDOB(people){
   let dOB = promptFor("What is the person's date of birth?", autoValid);
 
-  let foundDOB = people.filter(function(potentialMatch){
-    if(potentialMatch.dOB === dOB){
+  let foundDob = people.filter(function(potentialMatch){
+    if(potentialMatch.dob === dOB){
       return true;
     }
     else{
@@ -164,7 +164,7 @@ function searchByDOB(people){
     }
   })
   // TODO: find the person single person object using the name they entered.
-  return dOB;
+  return foundDob;
 }
 
 function searchByOccupation(people){
@@ -179,7 +179,7 @@ function searchByOccupation(people){
     }
   }) 
   // TODO: find the person single person object using the name they entered.
-  return occupation;
+  return foundOccupation;
 }
 
 // Function to search through an array of people to find matching ID then out put their name
@@ -192,13 +192,12 @@ function searchById(people){
   // filter through for matching id
   let possiblePerson = people.filter(function(potentialMatch){
     if(potentialMatch.id === personsIdNumber){
-      return potentialMatch;
-      // return potentialMatch.firstName + " " + potentialMatch.lastName;
+      return true;
+    }
+    else {
+      return false;
     }
   })
-
-  // call display function
-  displayPerson(possiblePerson);
 
   return possiblePerson;
 }
@@ -213,16 +212,14 @@ function searchByHeight(people){
   // Filter through for matching heights and store results in object array
   let foundHeight = people.filter(function(potentialMatch){
     if(potentialMatch.height === personsHeightNumber){
-      return potentialMatch;
+      return true;
+    }
+    else {
+      return false;
     }
   })
 
-  // call display function
-  displayPerson(foundHeight);
-
-  // debug/testing lines (next two lines)
-  //   console.log(foundHeight);
-  // return foundId;
+  return foundHeight;
 }
 
 
@@ -236,16 +233,13 @@ function searchByWeight(people){
   // Filter through for matching heights and store results in object array
   let foundWeight = people.filter(function(potentialMatch){
     if(potentialMatch.weight === personsWeightNumber){
-      return potentialMatch;
+      return true;
+    }
+    else {
+      return false;
     }
   })
-
-  // call display function
-  displayPerson(foundWeight);
-
-  // debug testing lines
-  // console.log(foundWeight);
-  // return foundWeight;
+  return foundWeight;
 }
 
 // Function to search by spouse id
@@ -259,17 +253,35 @@ function searchBySpouseId(people){
   let potentialMatchNotSpouse = people.filter(function(potentialMatch){
     if(potentialMatch.currentSpouse === personsSpouseNumberId){
       // return the foundSpouse's spouse since they are actually the person you are searching for
-      return potentialMatch;
+      return true;
+    }
+    else {
+      return false;
     }
 
   })
-  // call display function
-  displayPerson(foundSpouse);
-
-  // debut/testing lines
-  // console.log(potentialMatchNotSpouse);
-  // return foundSpouse;
+  return potentialMatchNotSpouse;
 }
+
+// Function to search by parent ids
+function searchByParentId(people){
+  let parentsId = promptFor("Enter the ID number of a Parent for the person you would like to find", autoValid);
+
+  // convert user input from string to number
+  let parentsIdNumber = parseInt(parentsId);
+
+  // filter through for matching parent but return the potenticalmatches you want, not the parent
+  let potentialMatchNotParent = people.filter(function(potentialMatch){
+    if(potentialMatch.parents[0] === parentsIdNumber || potentialMatch.parents[1] === parentsIdNumber){
+      return true;
+    }
+    else {
+      return false;
+    }
+  })
+  return potentialMatchNotParent;
+}
+
 
 //#endregion
 
