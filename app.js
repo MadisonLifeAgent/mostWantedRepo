@@ -133,9 +133,18 @@ function searchByDOB(people){
 }
 
 function searchByOccupation(people){
-  let occupation = promptFor("What is the person's occupation?", autoValid){
-    if(potentialMatch.occupation)
-  }
+  let occupation = promptFor("What is the person's occupation?", autoValid);
+    
+  let foundOccupation = people.filter(function(potentialMatch){
+    if(potentialMatch.occupation === occupation){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }) 
+  // TODO: find the person single person object using the name they entered.
+  return occupation;
 }
 
 
