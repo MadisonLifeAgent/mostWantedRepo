@@ -170,6 +170,29 @@ function searchById(people){
   return possiblePerson;
 }
 
+// Function to search height
+function searchByHeight(people){
+  let personsHeight = promptFor("Enter a height (inches)", autoValid);
+
+  // convert user input from string to number
+  let personsHeightNumber = parseInt(personsHeight);
+
+  // Filter through for matching heights and store results in object array
+  let foundHeight = people.filter(function(potentialMatch){
+    if(potentialMatch.height === personsHeightNumber){
+      return potentialMatch;
+    }
+  })
+
+  // call display function
+  displayPerson(foundHeight);
+
+  // debug/testing lines (next two lines)
+  //   console.log(foundHeight);
+  // return foundId;
+}
+
+
 //#endregion
 
 //Display functions.
