@@ -106,6 +106,8 @@ function mainMenu(person, people){
     
     case "descendants":
     // TODO: get person's descendants
+    getDescendants(person, data);
+
     break;
     case "restart":
     app(people); // restart
@@ -318,6 +320,24 @@ function displayPerson(person){
   // TODO: finish getting the rest of the information to display.
   alert(personInfo);
 }
+
+// This function display descendants of found person
+function getDescendants(person, people){
+  let descendantsOnly = [];
+  descendantsOnly = people.filter(function(potentialMatch){
+    // check for descendants only
+    if(potentialMatch.parents[0] === person.id || potentialMatch.parents[1] === person.id){
+      return `${potentialMatch.firstName} ${potentialMatch.lastName}` + getDescendants(potentialMatch, people);
+    }
+    else {
+      return false;
+    }
+  })
+
+  // call the funciton again to check descendants for their descendants
+  console.log(descendantsOnly);
+}
+
 
 //#endregion
 
