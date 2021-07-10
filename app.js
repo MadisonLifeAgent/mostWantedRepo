@@ -73,26 +73,38 @@ function mainMenu(person, people){
     let parentIDArray = person.parents;
     let parent1 = "";
     let parent2 = "";
+   
     //if person has 2 parents
     if(parentIDArray.length == 2){
       let foundParents = people.filter(function(potentialMatch){
-        if(potentialMatch.id === parentIDArray[0] || potentialMatch.id === parentIDArray[1]){
+        if(potentialMatch.id === parseInt(parentIDArray[0])|| potentialMatch.id === parseInt(parentIDArray[1])){
           return true;
         }
         else{
           return false;
         }
       })
-      
+      parent1 = `${foundParents[0].firstName} ${foundParents[0].lastName}`;
+      parent2 = ` & ${foundParents[1].firstName} ${foundParents[1].lastName}`;
     }
     //if person only has 1 parent
     else if(parentIDArray.length == 1){
-
+      let foundParents = people.filter(function(potentialMatch){
+        if(potentialMatch.id === parseInt(parentIDArray)){
+          return true;
+        }
+        else{
+          return false;
+        }
+      })
+      parent1 = `${foundParents[0].firstName} ${foundParents[0].lastName}`;
+      parent2 = "";
     }
-    else{
-
+    else if (parentIDArray.length == 0){
+      parent1 = `None recorded`;
+      parent2 = "";
     }
-    let familyResponse = promptFor(`${person.firstName} ${person.lastName}'s family: \nSpouse: ${spouseName} \nWould you like to go back 'yes' or 'no'? `,autoValid);
+    let familyResponse = promptFor(`${person.firstName} ${person.lastName}'s family: \nSpouse: ${spouseName} \nParent(s): ${parent1}${parent2}\nWould you like to go back 'yes' or 'no'? `,autoValid);
     
     //if user says 'yes', they will return to main menu prompt
     if(familyResponse === "yes"){
