@@ -66,9 +66,14 @@ function mainMenu(person, people){
         return false;
       }
     })
-    foundSpouse = foundSpouse[0];
-    let spouseName = `${foundSpouse.firstName} ${foundSpouse.lastName}`;
-    
+    let spouseName = "";
+    if(foundSpouse = []){
+      spouseName = "Not Married"
+    }
+    else{
+      foundSpouse = foundSpouse[0];
+      let spouseName = `${foundSpouse.firstName} ${foundSpouse.lastName}`;
+    }
     //this will find parents of person
     let parentIDArray = person.parents;
     let parent1 = "";
@@ -77,7 +82,7 @@ function mainMenu(person, people){
     //if person has 2 parents
     if(parentIDArray.length == 2){
       let foundParents = people.filter(function(potentialMatch){
-        if(potentialMatch.id === parseInt(parentIDArray[0])|| potentialMatch.id === parseInt(parentIDArray[1])){
+        if(potentialMatch.id === parseInt(parentIDArray[0]) || potentialMatch.id === parseInt(parentIDArray[1])){
           return true;
         }
         else{
@@ -101,10 +106,36 @@ function mainMenu(person, people){
       parent2 = "";
     }
     else if (parentIDArray.length == 0){
-      parent1 = `None recorded`;
+      parent1 = `No parents recorded`;
       parent2 = "";
     }
-    let familyResponse = promptFor(`${person.firstName} ${person.lastName}'s family: \nSpouse: ${spouseName} \nParent(s): ${parent1}${parent2}\nWould you like to go back 'yes' or 'no'? `,autoValid);
+    
+    //This will find if the person has any siblings
+    let siblingsString = "";
+    let siblingsArray = people.filter(function(potentialMatch){
+      if(JSON.stringify(potentialMatch.parents) === JSON.stringify(person.parents) && person.parents.length > 0 && potentialMatch.firstName != person.firstName){
+        return true;
+      }
+      else{
+        return false;
+      }
+    })
+    //this loop goes through the list of siblings and returns each name into one string variable
+    if(siblingsArray < 1){
+      siblingsString = "No siblings recorded";
+    }
+    else{
+      for(let i = 0; i < siblingsArray.length; i++){
+        if(i == 0){
+          siblingsString += `${siblingsArray[0].firstName} ${siblingsArray[0].lastName}`;
+        }
+        else{
+          siblingsString += `, ${siblingsArray[i].firstName} ${siblingsArray[i].lastName}`;
+        }
+      }
+    }
+    //This prompt tells the person's family info and then asks if they would like to go back
+    let familyResponse = promptFor(`${person.firstName} ${person.lastName}'s family: \nSpouse: ${spouseName} \nParent(s): ${parent1}${parent2} \nSiblings: ${siblingsString}\nWould you like to go back 'yes' or 'no'? `,autoValid);
     
     //if user says 'yes', they will return to main menu prompt
     if(familyResponse === "yes"){
