@@ -341,6 +341,26 @@ function searchBySpouseId(people){
   // return foundSpouse;
 }
 
+// This function retrieves descendants of found person
+function getDescendants(person, people){
+  // let descendantsOnly = [];
+  let descendantsOnly = people.filter(function(potentialMatch){
+    // check for descendants only
+    if(potentialMatch.parents[0] === person.id || potentialMatch.parents[1] === person.id){
+      getDescendants(potentialMatch, people);
+      return `${potentialMatch.firstName} ${potentialMatch.lastName}`;
+
+      // return potentialMatch;
+    }
+    else {
+      return false;
+    }
+  })
+
+  // call the funciton again to check descendants for their descendants
+  return descendantsOnly;
+}
+
 //#endregion
 
 //Display functions.
