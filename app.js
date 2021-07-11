@@ -148,8 +148,8 @@ function mainMenu(person, people){
     break;
     
     case "descendants":
-    // TODO: get person's descendants
-    getDescendants(person, data);
+    // TODO: get person's descendants and display it
+    displayDescendants(person, getDescendants(person, data));
 
     break;
     case "restart":
@@ -364,22 +364,22 @@ function displayPerson(person){
   alert(personInfo);
 }
 
-// This function display descendants of found person
-function getDescendants(person, people){
-  let descendantsOnly = [];
-  descendantsOnly = people.filter(function(potentialMatch){
-    // check for descendants only
-    if(potentialMatch.parents[0] === person.id || potentialMatch.parents[1] === person.id){
-      return `${potentialMatch.firstName} ${potentialMatch.lastName}` + getDescendants(potentialMatch, people);
-    }
-    else {
-      return false;
-    }
-  })
+// display Descendants of found person
+function displayDescendants(foundPerson, person){  
+  // display all at once variable
+  let displayNames = "";
+  // Descendants Phrase/Text
+  let displayDescendantsText = `${foundPerson.firstName} ${foundPerson.lastName}'s Descendants are:\n\n`;
 
-  // call the funciton again to check descendants for their descendants
-  console.log(descendantsOnly);
+  // loop through and display descendants all at once
+  for(let i = 0; i < person.length; i++){
+    displayNames += `${person[i].firstName} ${person[i].lastName}\n`;
+  }
+
+  // for debuging/testing, still need complete
+  console.log(`${displayDescendantsText}${displayNames}`);
 }
+
 
 
 //#endregion
