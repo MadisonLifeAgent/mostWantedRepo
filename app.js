@@ -17,7 +17,10 @@ function app(people){
     case 'no':
       // TODO: search by traits
             // if they answer no prompt start to ask user for search criteria (call a function here)
-            let defaultSearch = searchById(data);
+            //let defaultSearch = searchById(data);
+
+            // Ask user to select a search criteria
+            pickTraitToSearch(data);
       // break;
       // default:
     app(people); // restart app
@@ -150,6 +153,8 @@ function mainMenu(person, people){
     case "descendants":
     // TODO: get person's descendants and display it
     displayDescendants(person, getDescendants(person, data));
+    // give user opportunity to go back to main menu
+    mainMenu(person, people);
 
     break;
     case "restart":
@@ -168,6 +173,62 @@ function mainMenu(person, people){
 //Ideally you will have a function for each trait.
 /////////////////////////////////////////////////////////////////
 //#region 
+
+// function to determine which trait they would like to search
+function pickTraitToSearch(people){
+  let traitSelection = promptFor("Select a Trait to search. Options are: 'gender', 'dob' (date of birth), 'height', 'weight', 'eye color', or 'id'", autoValid);
+
+  let searchResults;
+
+  // call a trait search function based on user input
+  switch(traitSelection){
+    case 'gender':
+      searchResults = searchByGender(people);
+      break;
+  
+    case 'dob':
+      searchResults = searchByDOB(people);
+      break;
+
+    case 'date of birth':
+      searchResults = searchByDOB(people);
+      break;
+    
+    case 'height':
+      searchResults = searchByHeight(people);
+      break;
+    
+    case 'weight':
+      searchResults = searchByWeight(people);
+      break;
+
+    case 'eye color':
+      searchResults = searchByEyeColor(people);
+      break;
+  }
+  // display the users select trait search results
+  displayPeople(searchResults);
+}
+  // THIS CODE IS NOT FUNCTIONING CORRECTLY (NEXT 18 LINES)
+  // PROBABLY GONNA TAKE OUT
+  // let userResponse = promptFor("Pick one of the following options:\n\n" +
+  //     "Type '1' to search by full name \n" +
+  //     "Type '2' to search by another trait \n" +
+  //     "Type '3' to restart your search", autoValid);
+  
+  //   //if user says 'yes', they will return to main menu prompt
+  // if(userResponse === "1"){
+  //     searchByName(people);
+  // }
+  //     //if user says 'no', they will exit prompt and restart app
+  // else if (userResponse === "2"){
+  //     pickTraitToSearch(people);
+  // }
+  // else if (userResponse === "3"){
+  //   // restart app
+  //   app();
+  // }
+
 
 //nearly finished function used to search through an array of people to find matching first and last name and return a SINGLE person object.
 function searchByName(people){
@@ -200,7 +261,7 @@ function searchByEyeColor(people){
     }
   })
   // TODO: find the person single person object using the name they entered.
-  return eyeColor;
+  return foundEyeColor;
 }
 
 //TODO: add other trait filter functions here.
@@ -218,7 +279,7 @@ function searchByGender(people){
     }
   })
   // TODO: find the person single person object using the name they entered.
-  return gender;
+  return foundGender;
 }
 
 //Function to search through an array of people to find matching Date of Birth
@@ -234,7 +295,7 @@ function searchByDOB(people){
     }
   })
   // TODO: find the person single person object using the name they entered.
-  return dOB;
+  return foundDOB;
 }
 
 function searchByOccupation(people){
@@ -249,7 +310,7 @@ function searchByOccupation(people){
     }
   }) 
   // TODO: find the person single person object using the name they entered.
-  return occupation;
+  return foundOccupation;
 }
 
 // Function to search through an array of people to find matching ID then out put their name
@@ -286,13 +347,7 @@ function searchByHeight(people){
       return potentialMatch;
     }
   })
-
-  // call display function
-  displayPerson(foundHeight);
-
-  // debug/testing lines (next two lines)
-  //   console.log(foundHeight);
-  // return foundId;
+  return foundHeight;
 }
 
 
@@ -309,13 +364,7 @@ function searchByWeight(people){
       return potentialMatch;
     }
   })
-
-  // call display function
-  displayPerson(foundWeight);
-
-  // debug testing lines
-  // console.log(foundWeight);
-  // return foundWeight;
+  return foundWeight;
 }
 
 // Function to search by spouse id
@@ -333,12 +382,7 @@ function searchBySpouseId(people){
     }
 
   })
-  // call display function
-  displayPerson(foundSpouse);
-
-  // debut/testing lines
-  // console.log(potentialMatchNotSpouse);
-  // return foundSpouse;
+  return potentialMatchNotSpouse;
 }
 
 // This function retrieves descendants of found person
@@ -356,7 +400,6 @@ function getDescendants(person, people){
       return false;
     }
   })
-
   // call the funciton again to check descendants for their descendants
   return descendantsOnly;
 }
@@ -369,11 +412,34 @@ function getDescendants(person, people){
 //#region 
 
 // alerts a list of people
+// function displayPeople(people){
+//   alert(people.map(function(person){
+//     return person.firstName + " " + person.lastName;
+//   }).join("\n"));
+// }
+
+// display a list of people
 function displayPeople(people){
-  alert(people.map(function(person){
-    return person.firstName + " " + person.lastName;
-  }).join("\n"));
+  let displayNames = ""
+
+  let displayNamesText = "Your search yielded the following results. \n\n";
+  
+  for(let i = 0; i < people.length; i++){
+      if(i === people.length - 1 && people.length > 1){
+        displayNames += `and ${people[i].firstName} ${people[i].lastName}.\n`;
+      }
+      else if(people.length === 1){
+        displayNames += `${people[i].firstName} ${people[i].lastName}`;
+      }
+      else {
+      displayNames += `${people[i].firstName} ${people[i].lastName}, `;
+    }
+  }
+
+  alert(`${displayNamesText}${displayNames}`);
 }
+
+
 
 function displayPerson(person){
   // print all of the information about a person:
@@ -389,7 +455,7 @@ function displayDescendants(foundPerson, person){
   // display all at once variable
   let displayNames = "";
   // Descendants Phrase/Text
-  let displayDescendantsText = `${foundPerson.firstName} ${foundPerson.lastName}'s Descendants are:\n\n`;
+  let displayDescendantsText = `${foundPerson.firstName} ${foundPerson.lastName}'s Descendants are:\n (Click 'Ok' after reviewing to go back to the previous menu.)\n\n`;
 
   // loop through and display descendants all at once
   for(let i = 0; i < person.length; i++){
@@ -397,7 +463,7 @@ function displayDescendants(foundPerson, person){
   }
 
   // for debuging/testing, still need complete
-  console.log(`${displayDescendantsText}${displayNames}`);
+  alert(`${displayDescendantsText} ${displayNames}`);
 }
 
 
