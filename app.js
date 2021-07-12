@@ -18,11 +18,8 @@ function app(people){
       break;
     case 'no':
       // TODO: search by traits
-            // if they answer no prompt start to ask user for search criteria (call a function here)
-            pickOneOrFiveTraits(people)
-
-            // For Testing Only - Ask user to select a search criteria
-            //pickTraitToSearch(data);
+      // if they answer no prompt start to ask user for search criteria (call a function here)
+      pickOneOrFiveTraits(people);
       break;
 
       // restart app
@@ -45,7 +42,8 @@ function mainMenu(person, people){
     return app(people); // restart
   }
 
-  let displayOption = promptFor("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'", autoValid);
+  // prompt user for how to proceed
+  let displayOption = promptFor("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'", displayOptionValidation);
 
   switch(displayOption){
     case "info":
@@ -55,95 +53,8 @@ function mainMenu(person, people){
     
     case "family":
     // TODO: get person's family
-    //This will find spouse ID and print name accordingly
-    let spouseID = person.currentSpouse;
-    let foundSpouse = people.filter(function(potentialMatch){
-      if(potentialMatch.id === spouseID){
-        return true;
-      }
-      else{
-        return false;
-      }
-    })
-    let spouseName = "";
-    if(foundSpouse = []){
-      spouseName = "Not Married"
-    }
-    else{
-      foundSpouse = foundSpouse[0];
-      let spouseName = `${foundSpouse.firstName} ${foundSpouse.lastName}`;
-    }
-    //this will find parents of person
-    let parentIDArray = person.parents;
-    let parent1 = "";
-    let parent2 = "";
-   
-    //if person has 2 parents
-    if(parentIDArray.length == 2){
-      let foundParents = people.filter(function(potentialMatch){
-        if(potentialMatch.id === parseInt(parentIDArray[0]) || potentialMatch.id === parseInt(parentIDArray[1])){
-          return true;
-        }
-        else{
-          return false;
-        }
-      })
-      parent1 = `${foundParents[0].firstName} ${foundParents[0].lastName}`;
-      parent2 = ` & ${foundParents[1].firstName} ${foundParents[1].lastName}`;
-    }
-    //if person only has 1 parent
-    else if(parentIDArray.length == 1){
-      let foundParents = people.filter(function(potentialMatch){
-        if(potentialMatch.id === parseInt(parentIDArray)){
-          return true;
-        }
-        else{
-          return false;
-        }
-      })
-      parent1 = `${foundParents[0].firstName} ${foundParents[0].lastName}`;
-      parent2 = "";
-    }
-    else if (parentIDArray.length == 0){
-      parent1 = `No parents recorded`;
-      parent2 = "";
-    }
-    
-    //This will find if the person has any siblings
-    let siblingsString = "";
-    let siblingsArray = people.filter(function(potentialMatch){
-      if(JSON.stringify(potentialMatch.parents) === JSON.stringify(person.parents) && person.parents.length > 0 && potentialMatch.firstName != person.firstName){
-        return true;
-      }
-      else{
-        return false;
-      }
-    })
-    //this loop goes through the list of siblings and returns each name into one string variable
-    if(siblingsArray < 1){
-      siblingsString = "No siblings recorded";
-    }
-    else{
-      for(let i = 0; i < siblingsArray.length; i++){
-        if(i == 0){
-          siblingsString += `${siblingsArray[0].firstName} ${siblingsArray[0].lastName}`;
-        }
-        else{
-          siblingsString += `, ${siblingsArray[i].firstName} ${siblingsArray[i].lastName}`;
-        }
-      }
-    }
-    //This prompt displays the person's family info and then asks if they would like to go back
-    let familyResponse = promptFor(`${person.firstName} ${person.lastName}'s family: \nSpouse: ${spouseName} \nParent(s): ${parent1}${parent2} \nSiblings: ${siblingsString}\nWould you like to go back 'yes' or 'no'? `,autoValid);
-    
-    //if user says 'yes', they will return to main menu prompt
-    if(familyResponse === "yes"){
-      return mainMenu(person, people);
-    }
-    //if user says 'no', they will exit prompt
-    else if(familyResponse === "no"){
-      return;
-    }
+    // Find a person's family and display
+    findFamily(person, people);
     break;
     
     case "descendants":
@@ -177,7 +88,7 @@ function pickOneOrFiveTraits(people){
   "'2' for two traits\n" +
   "'3' for three traits\n" +
   "'4' for four traits\n" +
-  "'5' for five traits\n", autoValid)
+  "'5' for five traits\n", numberOfTraitsValidation);
 
   let searchResults;
 
@@ -190,14 +101,14 @@ function pickTraitToSearch(number, people){
 
   // if user picks a 1 trait search run this code
   if(people.length == number){
-    let traitSelection = promptFor("Select a Trait to search. Options are: 'gender', 'dob' (date of birth), 'height', 'weight', or 'eye color'", autoValid);
+    let traitSelection = promptFor("Select a Trait to search. Options are: 'gender', 'dob' (date of birth), 'height', 'weight', or 'eye color'", traitsValidation);
 
     switch(traitSelection){
       case 'gender':
         searchResults = searchByGender(people);
         break;
     
-      case 'dob' || 'date of birth':
+      case 'dob':
         searchResults = searchByDOB(people);
         break;
   
@@ -221,7 +132,7 @@ function pickTraitToSearch(number, people){
   // // if user picks more than 1 trait to search run this code
   else {
     for(let i = 0; i < number; i++){
-      let traitSelection = promptFor("Select a Trait to search. Options are: 'gender', 'dob' (date of birth), 'height', 'weight', 'eye color', or 'occupation'", autoValid);
+      let traitSelection = promptFor("Select a Trait to search. Options are: 'gender', 'dob' (date of birth), 'height', 'weight', 'eye color', or 'occupation'", traitsValidation);
 
         // get search results and store in people array so next search only searches remaining objects
         if(traitSelection === 'gender'){
@@ -248,8 +159,8 @@ function pickTraitToSearch(number, people){
           searchResults = searchByOccupation(people);
           people = searchResults;
         }
-      }
     }
+  }
 
      // display the users select trait search results
      displayListOfPeople(people);
@@ -404,6 +315,76 @@ function searchBySpouseId(people){
 }
 
 
+// find someone's spouse
+function findSpouse(person, people){
+  let spouse = people.filter(function(potentialMatch){
+      if(potentialMatch.id === [person.currentSpouse]){
+          return true;
+      }
+      else{
+          return false;
+      }
+  })
+
+  return spouse;
+}
+
+// find someone's parents
+function findParents(person, people){
+  let parentsString = "";
+
+  let parents = people.filter(function(potentialMatch){
+    if(potentialMatch.id === person.parents[0] || potentialMatch.id === person.parents[1]){
+        return true;
+    }
+    else{
+      return false;
+    }
+  })
+  for(let i = 0; i < parents.length; i++){
+    if(i === parents.length - 1 && i != 0){
+      parentsString += `and ${parents[i].firstName} ${parents[i].lastName}`;
+    }
+    else{
+      parentsString += `${parents[i].firstName} ${parents[i].lastName}`;
+    }
+  return parentsString;
+  }
+}
+
+// find someone's siblings
+function findSiblings(person, people){
+  let siblingsString = "";
+  
+  let siblings = people.filter(function(potentialMatch){
+    if(potentialMatch.parents[0] === person.parents[0] || potentialMatch.parents[0] === person.parents[1] || potentialMatch.parents[1] === person.parents[0] || potentialMatch.parents[0] === person.parents[1]){
+        return true;
+    }
+    else {
+      return false;
+    }
+  })
+
+  for(let i = 0; i < siblings.length; i++){
+    if(i === siblings.length - 1 && i != 0){
+      siblingsString += `and ${siblings[i].firstName} ${siblings[i].lastName}`;
+    }
+    else{
+      siblingsString += `${siblings[i].firstName} ${siblings[i].lastName}`;
+    }
+  }
+  return siblingsString;
+}
+
+// find someones family - this function calls three other functions
+function findFamily(person, people){
+  let spouse = findSpouse(person, people);
+  let parents = findParents(person, people);
+  let siblings = findSiblings(person, people);
+
+  displayFamily(person, spouse, parents, siblings);
+}
+
 // This function retrieves descendants of found person
 function getDescendants(person, people){
   let descendantsOnly = [];
@@ -416,9 +397,10 @@ function getDescendants(person, people){
   //this loop goes through descendantsOnly one by one
   for(let j = 0; j < descendantsOnly.length; j++){
      descendantsOnly = descendantsOnly.concat(getDescendants(descendantsOnly[j], people))
-  
   }
+  return descendantsOnly;
 }
+
 //#endregion
 
 //Display functions.
@@ -460,7 +442,7 @@ function displayListOfPeople(people){
 
 function displayAllInfo(person, people){
   // print all of the information about a person and prompt next direction of search:
-     let infoResponse = promptFor(`${person.firstName} ${person.lastName}'s info: \nGender: ${person.gender} \nDate of Birth: ${person.dob} \nHeight: ${person.height} \nWeight: ${person.weight} \nEye color: ${person.eyeColor} \nOccupation: ${person.occupation} \nWould you like to go back 'yes' or 'no'?`, autoValid);
+     let infoResponse = promptFor(`${person.firstName} ${person.lastName}'s info: \nGender: ${person.gender} \nDate of Birth: ${person.dob} \nHeight: ${person.height} \nWeight: ${person.weight} \nEye color: ${person.eyeColor} \nOccupation: ${person.occupation} \nWould you like to go back 'yes' or 'no'?`, yesNo);
 
     //if user says 'yes', they will return to main menu prompt
      if(infoResponse === "yes"){
@@ -470,7 +452,7 @@ function displayAllInfo(person, people){
     //if user says 'no', they will exit prompt
      else if(infoResponse === "no"){
       // restart search
-        app(data);
+      return app(data);
     }
 }
 
@@ -488,7 +470,20 @@ function displayDescendants(person, descendants){
   alert(`${displayDescendantsText}${displayNames}`);
 }
 
+function displayFamily(person, spouse, parents, siblings){
+    //This prompt displays the person's family info and then asks if they would like to go back
+    let familyResponse = promptFor(`${person.firstName} ${person.lastName}'s family: \nSpouse: ${spouse.firstName} ${spouse.lastName} \nParent(s): ${parents} \nSiblings: ${siblings}\nWould you like to go back 'yes' or 'no'? `, yesNo);
+    
+    //if user says 'yes', they will return to main menu prompt
+    if(familyResponse === "yes"){
+    return mainMenu(person, people);
+    }
 
+    //if user says 'no', they will exit prompt
+    else if(familyResponse === "no"){
+        app(data);
+    }
+}
 
 //#endregion
 
@@ -504,13 +499,10 @@ function displayDescendants(person, descendants){
 //isValid: Will capture the return of the validation function callback. true(the user input is valid)/false(the user input was not valid).
 //this function will continue to loop until the user enters something that is not an empty string("") or is considered valid based off the callback function(valid).
 function promptFor(question, valid){
-  let response;
-  let isValid;
   do{
-    response = prompt(question).trim();
-    isValid = valid(response);
-  } while(response === ""  ||  isValid === false)
-  return response
+    var response = prompt(question).trim();
+  } while(!response || !valid(response));
+  return response;
 }
 
 // helper function/callback to pass into promptFor to validate yes/no answers.
@@ -530,8 +522,42 @@ function autoValid(input){
 }
 
 //Unfinished validation function you can use for any of your custom validation callbacks.
-//can be used for things like eye color validation for example.
-function customValidation(input){
-  
+
+// function to validate number of traits selection
+function numberOfTraitsValidation(input){
+  input = parseInt(input);
+  console.log(input);
+
+  if(input > 0 && input <= 6 ){
+    return true;
+  }
+  else{
+    alert("Not a valid choice, please try again.");
+    return false;
+  }
 }
+
+// function to validate traits entered by user
+function traitsValidation(input){
+  if(input === "gender" || input === "dob" || input === "height" || input === "weight" || input === "eye color"){
+    return true;
+  }
+  else{
+    alert("Not a valid choice, please try again.");
+    return false;
+  }
+}
+
+// function to validate displayOption prompt
+function displayOptionValidation(input){
+
+  if(input === "info" || input === "descendants" || input === "family" || input === "restart" || input === "quit"){
+    return true;
+  }
+  else{
+    alert("Not a valid choice, please try again.");
+    return false;
+  }
+}
+
 //#endregion
