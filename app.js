@@ -17,10 +17,10 @@ function app(people){
     case 'no':
       // TODO: search by traits
             // if they answer no prompt start to ask user for search criteria (call a function here)
-            //let defaultSearch = searchById(data);
-
+            pickOneOrFiveTraits(people)
             // Ask user to select a search criteria
-            pickTraitToSearch(data);
+            //pickTraitToSearch(data);
+
       // break;
       // default:
     app(people); // restart app
@@ -152,18 +152,24 @@ function mainMenu(person, people){
     
     case "descendants":
     // TODO: get person's descendants and display it
-    displayDescendants(person, getDescendants(person, data));
+    displayPeople(getDescendants(person, data));
+    
+    // displayPeople(person, descendants);
+
     // give user opportunity to go back to main menu
     mainMenu(person, people);
 
     break;
+
     case "restart":
     app(people); // restart
     break;
+
     case "quit":
     return; // stop execution
+
     default:
-    return mainMenu(person, people); // ask again
+    return app(people); // ask again
   }
 }
 
@@ -174,9 +180,69 @@ function mainMenu(person, people){
 /////////////////////////////////////////////////////////////////
 //#region 
 
+// FUNCTION to pick by one or multiple traits
+function pickOneOrFiveTraits(traitsArray){
+  let oneOrFiveTraits = promptFor("Please select the number of traits you would like to search by:\n\n" +
+  "'1' for one trait\n" +
+  "'2' for two traits\n" +
+  "'3' for three traits\n" +
+  "'4' for four traits\n" +
+  "'5' for five traits\n", autoValid)
+
+  let searchResults;
+
+  switch(oneOrFiveTraits){
+    case '1':
+      searchResults = pickTraitToSearch(trait);
+      break;
+
+    case '2':
+      searchResults = pickMultipleTraitsToSearch(oneOrFiveTraits, traitsArray);
+      break;
+
+    case '3':
+      searchResults = pickMultipleTraitsToSearch(oneOrFiveTraits, traitsArray);
+      break;
+
+    case '4':
+      searchResults = pickMultipleTraitsToSearch(oneOrFiveTraits, traitsArray);
+      break;
+
+    case '5':
+      searchResults = pickMultipleTraitsToSearch(oneOrFiveTraits, traitsArray);
+      break;
+    }
+
+    // output search results
+    // displayPeople(searchResults);
+
+}
+
+// FUNCTION that asks user for multiple trait selecitons
+function pickMultipleTraitsToSearch(number, array){
+  // set arrays, variables as needed
+  let traitSelectionArray = [];
+  number = parseInt(number);
+  let traitSelection = "";
+
+  // get traits selection from user
+  while(traitSelectionArray.length < number){
+  traitSelection = promptFor("Enter " + number + " trait(s) you want to search using the options and format below:\n\n" +
+      "(gender, dob, height, weight, eyecolor)", autoValid);
+  
+  traitSelectionArray = traitSelection.split(", ");
+
+    // remove extra traits if user typed too many 
+    while (traitSelectionArray.length > number){
+      traitSelectionArray.pop();
+    }
+  }
+ // return traitSelectionArray;
+}
+
 // function to determine which trait they would like to search
 function pickTraitToSearch(people){
-  let traitSelection = promptFor("Select a Trait to search. Options are: 'gender', 'dob' (date of birth), 'height', 'weight', 'eye color', or 'id'", autoValid);
+  let traitSelection = promptFor("Select a Trait to search. Options are: 'gender', 'dob' (date of birth), 'height', 'weight', or 'eye color'", autoValid);
 
   let searchResults;
 
@@ -186,13 +252,13 @@ function pickTraitToSearch(people){
       searchResults = searchByGender(people);
       break;
   
-    case 'dob':
+    case 'dob' || 'date of birth':
       searchResults = searchByDOB(people);
       break;
 
-    case 'date of birth':
-      searchResults = searchByDOB(people);
-      break;
+    // case 'date of birth':
+    //   searchResults = searchByDOB(people);
+    //   break;
     
     case 'height':
       searchResults = searchByHeight(people);
@@ -209,25 +275,6 @@ function pickTraitToSearch(people){
   // display the users select trait search results
   displayPeople(searchResults);
 }
-  // THIS CODE IS NOT FUNCTIONING CORRECTLY (NEXT 18 LINES)
-  // PROBABLY GONNA TAKE OUT
-  // let userResponse = promptFor("Pick one of the following options:\n\n" +
-  //     "Type '1' to search by full name \n" +
-  //     "Type '2' to search by another trait \n" +
-  //     "Type '3' to restart your search", autoValid);
-  
-  //   //if user says 'yes', they will return to main menu prompt
-  // if(userResponse === "1"){
-  //     searchByName(people);
-  // }
-  //     //if user says 'no', they will exit prompt and restart app
-  // else if (userResponse === "2"){
-  //     pickTraitToSearch(people);
-  // }
-  // else if (userResponse === "3"){
-  //   // restart app
-  //   app();
-  // }
 
 
 //nearly finished function used to search through an array of people to find matching first and last name and return a SINGLE person object.
@@ -387,21 +434,26 @@ function searchBySpouseId(people){
 
 // This function retrieves descendants of found person
 function getDescendants(person, people){
-  // let descendantsOnly = [];
-  let descendantsOnly = people.filter(function(potentialMatch){
-    // check for descendants only
-    if(potentialMatch.parents[0] === person.id || potentialMatch.parents[1] === person.id){
-      getDescendants(potentialMatch, people);
-      return `${potentialMatch.firstName} ${potentialMatch.lastName}`;
+  let descendantsOnly = [];
 
-      // return potentialMatch;
-    }
-    else {
-      return false;
-    }
-  })
-  // call the funciton again to check descendants for their descendants
-  return descendantsOnly;
+  descendantsOnly = people.filter(function(potentialMatch){
+      // check for descendants only
+      if(potentialMatch.parents[0] === person.id || potentialMatch.parents[1] === person.id){
+        console.log(`${potentialMatch.firstName} ${potentialMatch.lastName}\n`);
+        // push potential match to descendants array
+        descendantsOnly.push(potentialMatch.firstName + " " + potentialMatch.lastName + "\n");
+        // call the function again to get potential match descendants
+        return potentialMatch = getDescendants(potentialMatch, people);
+
+        // return potentialMatch;
+
+      }
+      else {
+        return false;
+      }
+    })
+
+    return descendantsOnly;
 }
 
 //#endregion
@@ -451,19 +503,21 @@ function displayPerson(person){
 }
 
 // display Descendants of found person
-function displayDescendants(foundPerson, person){  
+function displayDescendants(person, descendants){  
   // display all at once variable
   let displayNames = "";
   // Descendants Phrase/Text
-  let displayDescendantsText = `${foundPerson.firstName} ${foundPerson.lastName}'s Descendants are:\n (Click 'Ok' after reviewing to go back to the previous menu.)\n\n`;
+  let displayDescendantsText = `${person.firstName} ${person.lastName}'s Descendants are:\n (Click 'Ok' after reviewing to go back to the previous menu.)\n\n`;
 
   // loop through and display descendants all at once
-  for(let i = 0; i < person.length; i++){
-    displayNames += `${person[i].firstName} ${person[i].lastName}\n`;
+  for(let i = 0; i < descendants.length; i++){
+    // displayNames += `${person[i].firstName} ${person[i].lastName}\n`;
+    displayNames += `${descendants[i]}\n`;
+
   }
 
   // for debuging/testing, still need complete
-  alert(`${displayDescendantsText} ${displayNames}`);
+  alert(`${displayDescendantsText}${displayNames}`);
 }
 
 
