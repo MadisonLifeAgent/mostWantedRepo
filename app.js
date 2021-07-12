@@ -152,7 +152,8 @@ function mainMenu(person, people){
     
     case "descendants":
     // TODO: get person's descendants and display it
-    displayPeople(getDescendants(person, data));
+    let descendants = getDescendants(person, data)
+    displayPeople(descendants);
     
     // displayPeople(person, descendants);
 
@@ -432,30 +433,22 @@ function searchBySpouseId(people){
   return potentialMatchNotSpouse;
 }
 
+
 // This function retrieves descendants of found person
 function getDescendants(person, people){
   let descendantsOnly = [];
-
-  descendantsOnly = people.filter(function(potentialMatch){
-      // check for descendants only
-      if(potentialMatch.parents[0] === person.id || potentialMatch.parents[1] === person.id){
-        console.log(`${potentialMatch.firstName} ${potentialMatch.lastName}\n`);
-        // push potential match to descendants array
-        descendantsOnly.push(potentialMatch.firstName + " " + potentialMatch.lastName + "\n");
-        // call the function again to get potential match descendants
-        return potentialMatch = getDescendants(potentialMatch, people);
-
-        // return potentialMatch;
-
-      }
-      else {
-        return false;
-      }
-    })
-
-    return descendantsOnly;
+  //This loop goes through and finds all the first 
+  for(let i = 0; i < people.length; i++){
+    if(people[i].parents.includes(person.id)){
+      descendantsOnly.push(people[i]);
+    }
+  }
+  //this loop goes through descendantsOnly one by one
+  for(let j = 0; j < descendantsOnly.length; j++){
+     descendantsOnly = descendantsOnly.concat(getDescendants(descendantsOnly[j], people))
+  
+  }
 }
-
 //#endregion
 
 //Display functions.
@@ -566,5 +559,4 @@ function autoValid(input){
 function customValidation(input){
   
 }
-
 //#endregion
