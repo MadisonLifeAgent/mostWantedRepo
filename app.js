@@ -181,7 +181,7 @@ function mainMenu(person, people){
 //#region 
 
 // FUNCTION to pick by one or multiple traits
-function pickOneOrFiveTraits(traitsArray){
+function pickOneOrFiveTraits(people){
   let oneOrFiveTraits = promptFor("Please select the number of traits you would like to search by:\n\n" +
   "'1' for one trait\n" +
   "'2' for two traits\n" +
@@ -193,23 +193,23 @@ function pickOneOrFiveTraits(traitsArray){
 
   switch(oneOrFiveTraits){
     case '1':
-      searchResults = pickTraitToSearch(trait);
+      searchResults = pickTraitToSearch(people);
       break;
 
     case '2':
-      searchResults = pickMultipleTraitsToSearch(oneOrFiveTraits, traitsArray);
+      searchResults = pickMultipleTraitsToSearch(oneOrFiveTraits, people);
       break;
 
     case '3':
-      searchResults = pickMultipleTraitsToSearch(oneOrFiveTraits, traitsArray);
+      searchResults = pickMultipleTraitsToSearch(oneOrFiveTraits, people);
       break;
 
     case '4':
-      searchResults = pickMultipleTraitsToSearch(oneOrFiveTraits, traitsArray);
+      searchResults = pickMultipleTraitsToSearch(oneOrFiveTraits, people);
       break;
 
     case '5':
-      searchResults = pickMultipleTraitsToSearch(oneOrFiveTraits, traitsArray);
+      searchResults = pickMultipleTraitsToSearch(oneOrFiveTraits, people);
       break;
     }
 
@@ -219,7 +219,7 @@ function pickOneOrFiveTraits(traitsArray){
 }
 
 // FUNCTION that asks user for multiple trait selecitons
-function pickMultipleTraitsToSearch(number, array){
+function pickMultipleTraitsToSearch(number, people){
   // set arrays, variables as needed
   let traitSelectionArray = [];
   number = parseInt(number);
