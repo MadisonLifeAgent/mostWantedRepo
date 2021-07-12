@@ -54,7 +54,95 @@ function mainMenu(person, people){
     case "family":
     // TODO: get person's family
     // Find a person's family and display
-    findFamily(person, people);
+    let spouseID = person.currentSpouse;
+    let foundSpouse = people.filter(function(potentialMatch){
+        if(potentialMatch.id === spouseID){
+            return true;
+    }
+    else{
+        return false;
+    }
+    })
+    let spouseName = "";
+    if(foundSpouse = []){
+    spouseName = "Not Married"
+    }
+    else{
+    foundSpouse = foundSpouse[0];
+    let spouseName = `${foundSpouse.firstName} ${foundSpouse.lastName}`;
+    }
+    //this will find parents of person
+    let parentIDArray = person.parents;
+    let parent1 = "";
+    let parent2 = "";
+
+    //if person has 2 parents
+    if(parentIDArray.length == 2){
+    let foundParents = people.filter(function(potentialMatch){
+        if(potentialMatch.id === parseInt(parentIDArray[0]) || potentialMatch.id === parseInt(parentIDArray[1])){
+        return true;
+        }
+        else{
+        return false;
+        }
+    })
+    parent1 = `${foundParents[0].firstName} ${foundParents[0].lastName}`;
+    parent2 = ` & ${foundParents[1].firstName} ${foundParents[1].lastName}`;
+    }
+    //if person only has 1 parent
+    else if(parentIDArray.length == 1){
+    let foundParents = people.filter(function(potentialMatch){
+        if(potentialMatch.id === parseInt(parentIDArray)){
+        return true;
+        }
+        else{
+        return false;
+        }
+    })
+    parent1 = `${foundParents[0].firstName} ${foundParents[0].lastName}`;
+    parent2 = "";
+    }
+    else if (parentIDArray.length == 0){
+    parent1 = `No parents recorded`;
+    parent2 = "";
+    }
+    
+    //This will find if the person has any siblings
+    let siblingsString = "";
+    let siblingsArray = people.filter(function(potentialMatch){
+    if(JSON.stringify(potentialMatch.parents) === JSON.stringify(person.parents) && person.parents.length > 0 && potentialMatch.firstName != person.firstName){
+        return true;
+    }
+    else{
+        return false;
+    }
+    })
+    //this loop goes through the list of siblings and returns each name into one string variable
+    if(siblingsArray < 1){
+    siblingsString = "No siblings recorded";
+    }
+    else{
+    for(let i = 0; i < siblingsArray.length; i++){
+        if(i == 0){
+        siblingsString += `${siblingsArray[0].firstName} ${siblingsArray[0].lastName}`;
+        }
+        else{
+        siblingsString += `, ${siblingsArray[i].firstName} ${siblingsArray[i].lastName}`;
+        }
+    }
+    }
+    //This prompt displays the person's family info and then asks if they would like to go back
+    let familyResponse = promptFor(`${person.firstName} ${person.lastName}'s family: \nSpouse: ${spouseName} \nParent(s): ${parent1}${parent2} \nSiblings: ${siblingsString}\nWould you like to go back 'yes' or 'no'? `,autoValid);
+    
+    //if user says 'yes', they will return to main menu prompt
+    if(familyResponse === "yes"){
+    return mainMenu(person, people);
+    }
+    //if user says 'no', they will exit prompt
+    else if(familyResponse === "no"){
+    return;
+    }
+    
     break;
     
     case "descendants":
@@ -280,7 +368,6 @@ function searchByHeight(people){
   return foundHeight;
 }
 
-
 // find someone based on their weight
 function searchByWeight(people){
   let personsWeight = promptFor("Enter a weight (pounds)", autoValid);
@@ -312,77 +399,6 @@ function searchBySpouseId(people){
 
   })
   return potentialMatchNotSpouse;
-}
-
-
-// find someone's spouse
-function findSpouse(person, people){
-  let spouse = people.filter(function(potentialMatch){
-      if(potentialMatch.id === [person.currentSpouse]){
-          return true;
-      }
-      else{
-          return false;
-      }
-  })
-
-  return spouse;
-}
-
-// find someone's parents
-function findParents(person, people){
-  let parentsString = "";
-
-  let parents = people.filter(function(potentialMatch){
-    if(potentialMatch.id === person.parents[0] || potentialMatch.id === person.parents[1]){
-        return true;
-    }
-    else{
-      return false;
-    }
-  })
-  for(let i = 0; i < parents.length; i++){
-    if(i === parents.length - 1 && i != 0){
-      parentsString += `and ${parents[i].firstName} ${parents[i].lastName}`;
-    }
-    else{
-      parentsString += `${parents[i].firstName} ${parents[i].lastName}`;
-    }
-  return parentsString;
-  }
-}
-
-// find someone's siblings
-function findSiblings(person, people){
-  let siblingsString = "";
-  
-  let siblings = people.filter(function(potentialMatch){
-    if(potentialMatch.parents[0] === person.parents[0] || potentialMatch.parents[0] === person.parents[1] || potentialMatch.parents[1] === person.parents[0] || potentialMatch.parents[0] === person.parents[1]){
-        return true;
-    }
-    else {
-      return false;
-    }
-  })
-
-  for(let i = 0; i < siblings.length; i++){
-    if(i === siblings.length - 1 && i != 0){
-      siblingsString += `and ${siblings[i].firstName} ${siblings[i].lastName}`;
-    }
-    else{
-      siblingsString += `${siblings[i].firstName} ${siblings[i].lastName}`;
-    }
-  }
-  return siblingsString;
-}
-
-// find someones family - this function calls three other functions
-function findFamily(person, people){
-  let spouse = findSpouse(person, people);
-  let parents = findParents(person, people);
-  let siblings = findSiblings(person, people);
-
-  displayFamily(person, spouse, parents, siblings);
 }
 
 // This function retrieves descendants of found person
@@ -438,8 +454,6 @@ function displayListOfPeople(people){
   alert(`${displayNamesText}${displayNames}`);
 }
 
-
-
 function displayAllInfo(person, people){
   // print all of the information about a person and prompt next direction of search:
      let infoResponse = promptFor(`${person.firstName} ${person.lastName}'s info: \nGender: ${person.gender} \nDate of Birth: ${person.dob} \nHeight: ${person.height} \nWeight: ${person.weight} \nEye color: ${person.eyeColor} \nOccupation: ${person.occupation} \nWould you like to go back 'yes' or 'no'?`, yesNo);
@@ -484,10 +498,7 @@ function displayFamily(person, spouse, parents, siblings){
         app(data);
     }
 }
-
 //#endregion
-
-
 
 //Validation functions.
 //Functions to validate user input.
