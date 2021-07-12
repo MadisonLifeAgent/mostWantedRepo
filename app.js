@@ -27,7 +27,7 @@ function app(people){
 
       // restart app
       default:
-    app(people);
+        app(people);
       break;
   }
   
@@ -49,16 +49,8 @@ function mainMenu(person, people){
 
   switch(displayOption){
     case "info":
-    // TODO: get person's info and display
-    let infoResponse = promptFor(`${person.firstName} ${person.lastName}'s info: \nGender: ${person.gender} \nDate of Birth: ${person.dob} \nHeight: ${person.height} \nWeight: ${person.weight} \nEye color: ${person.eyeColor} \nOccupation: ${person.occupation} \nWould you like to go back 'yes' or 'no'?`, autoValid);
-    //if user says 'yes', they will return to main menu prompt
-    if(infoResponse === "yes"){
-      return mainMenu(person, people);
-    }
-    //if user says 'no', they will exit prompt
-    else if(infoResponse === "no"){
-      return;
-    }
+    // get person's info and display
+    displayAllInfo(person, people);
     break;
     
     case "family":
@@ -156,7 +148,7 @@ function mainMenu(person, people){
     
     case "descendants":
     // Get person's descendants and display it
-    displayPeople(getDescendants(person, data));
+    displayListOfPeople(getDescendants(person, data));
     break;
 
     case "restart":
@@ -167,7 +159,7 @@ function mainMenu(person, people){
     return; // stop execution
 
     default:
-    return app(data); // ask again
+    app(data);// ask again
   }
 }
 
@@ -260,7 +252,7 @@ function pickTraitToSearch(number, people){
     }
 
      // display the users select trait search results
-  displayPeople(people);
+     displayListOfPeople(people);
 
   // restart the app and reset the data to entire data set
   return app(data); // ask again
@@ -319,10 +311,10 @@ function searchByGender(people){
 
 //find people by date of birth
 function searchByDOB(people){
-  let dOB = promptFor("What is the person's date of birth? (i.e. '2/19/1970')", autoValid);
+  let dOB = promptFor("What is the person's date of birth? (i.e. 2/19/1970)", autoValid);
 
   let foundDOB = people.filter(function(potentialMatch){
-    if(potentialMatch.dOB === dOB){
+    if(potentialMatch.dob === dOB){
       return true;
     }
     else{
@@ -359,10 +351,6 @@ function searchById(people){
       return potentialMatch;
     }
   })
-
-  // display person found
-  displayPerson(possiblePerson);
-
   return possiblePerson;
 }
 
@@ -427,9 +415,6 @@ function getDescendants(person, people){
         descendantsOnly.push(potentialMatch.firstName + " " + potentialMatch.lastName + "\n");
         // call the function again to get potential match descendants
         return potentialMatch = getDescendants(potentialMatch, people);
-
-        // return potentialMatch;
-
       }
       else {
         return false;
@@ -446,14 +431,14 @@ function getDescendants(person, people){
 //#region 
 
 // alerts a list of people
-// function displayPeople(people){
+// function displayListOfPeople(people){
 //   alert(people.map(function(person){
 //     return person.firstName + " " + person.lastName;
 //   }).join("\n"));
 // }
 
 // display a list of people
-function displayPeople(people){
+function displayListOfPeople(people){
   let displayNames = "";
 
   // default search results message
@@ -477,13 +462,20 @@ function displayPeople(people){
 
 
 
-function displayPerson(person){
-  // print all of the information about a person:
-  // height, weight, age, name, occupation, eye color.
-  let personInfo = "First Name: " + person.firstName + "\n";
-  personInfo += "Last Name: " + person.lastName + "\n";
-  // TODO: finish getting the rest of the information to display.
-  alert(personInfo);
+function displayAllInfo(person, people){
+  // print all of the information about a person and prompt next direction of search:
+     let infoResponse = promptFor(`${person.firstName} ${person.lastName}'s info: \nGender: ${person.gender} \nDate of Birth: ${person.dob} \nHeight: ${person.height} \nWeight: ${person.weight} \nEye color: ${person.eyeColor} \nOccupation: ${person.occupation} \nWould you like to go back 'yes' or 'no'?`, autoValid);
+
+    //if user says 'yes', they will return to main menu prompt
+     if(infoResponse === "yes"){
+       return mainMenu(person, people);
+     }
+
+    //if user says 'no', they will exit prompt
+     else if(infoResponse === "no"){
+      // restart search
+        app(data);
+    }
 }
 
 // display Descendants of found person
