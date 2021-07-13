@@ -17,8 +17,7 @@ function app(people){
       searchResults = searchByName(people);
       break;
     case 'no':
-      // TODO: search by traits
-      // if they answer no prompt start to ask user for search criteria (call a function here)
+      // if user answers no, start to ask user for search criteria
       pickOneOrFiveTraits(people);
       break;
 
@@ -37,14 +36,16 @@ function mainMenu(person, people){
 
   /* Here we pass in the entire person object that we found in our search, as well as the entire original dataset of people. We need people in order to find descendants and other information that the user may want. */
 
+  // if person not found restart app
   if(!person){
     alert("Could not find that individual.");
     return app(people); // restart
   }
 
-  // prompt user for how to proceed
+  // prompt user for how to proceed after finding person
   let displayOption = promptFor("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'", displayOptionValidation);
 
+  // options for where search will go next
   switch(displayOption){
     case "info":
     // get person's info and display
@@ -53,6 +54,8 @@ function mainMenu(person, people){
     
     case "family":
     // Find a person's family and display it
+
+    // find a persons spouse
     let spouseID = person.currentSpouse;
     let foundSpouse = people.filter(function(potentialMatch){
         if(potentialMatch.id === spouseID){
@@ -63,6 +66,7 @@ function mainMenu(person, people){
         }
     })
 
+    // store spouse search results
     let spouseName = "";
     if(foundSpouse.length === 0){
         spouseName = "Not Married"
@@ -107,7 +111,7 @@ function mainMenu(person, people){
       parent2 = "";
     }
     
-    //This will find if the person has any siblings
+    //This will find if the person has siblings
     let siblingsString = "";
     
     let siblingsArray = people.filter(function(potentialMatch){
@@ -135,7 +139,7 @@ function mainMenu(person, people){
     }
 
     //This prompt displays the person's family info and then asks if they would like to go back
-    let familyResponse = promptFor(`${person.firstName} ${person.lastName}'s family: \nSpouse: ${spouseName} \nParent(s): ${parent1}${parent2} \nSiblings: ${siblingsString}\nWould you like to go back 'yes' or 'no'? `, yesNo);
+    let familyResponse = promptFor(`${person.firstName} ${person.lastName}'s family: \nSpouse: ${spouseName} \nParent(s): ${parent1}${parent2} \nSiblings: ${siblingsString}\n\nWould you like to go back 'yes' or 'no'? `, yesNo);
     
     //if user says 'yes', they will return to main menu prompt
     if(familyResponse === "yes"){
@@ -151,30 +155,30 @@ function mainMenu(person, people){
     
     case "descendants":
     // Get person's descendants and display it
-      displayListOfPeople(getDescendants(person, data));
+      displayDescendants(person, getDescendants(person, data));
       break;
 
     case "restart":
-      app(data); // restart
+      app(data); // restart app
       break;
 
     case "quit":
       return; // stop execution
 
     default:
-      app(data);// ask again
+      app(data);// ask again if user doesn't input any choice but clicks 'ok' or presses the enter key
   }
 }
 
 //#endregion
 
 //Filter functions.
-//Ideally you will have a function for each trait.
 /////////////////////////////////////////////////////////////////
 //#region 
 
 // FUNCTION to pick by one or more traits
 function pickOneOrFiveTraits(people){
+  // ask user for how many traits to search
   let oneOrFiveTraits = promptFor("Please enter the number of traits you would like to search by:\n\n" +
                         "'1' for one trait\n" +
                         "'2' for two traits\n" +
@@ -182,20 +186,21 @@ function pickOneOrFiveTraits(people){
                         "'4' for four traits\n" +
                         "'5' for five traits\n", numberOfTraitsValidation);
 
-  let searchResults;
 
+  // ask user which traits to search
+  let searchResults;
   searchResults = pickTraitToSearch(oneOrFiveTraits, people);
 }
 
-// function to determine which trait they would like to search
+// function to determine which trait user would like to search by
 function pickTraitToSearch(number, people){
   let searchResults;
 
-  // if user picks a 1 trait search run this code
+  // if user picks a 1 trait search run this switch case
   if(people.length == number){
     let traitSelection = promptFor("Select a Trait to search. Options are: 'gender', 'dob' (date of birth)," +
                         " 'height', 'weight', or 'eye color'", traitsValidation);
-
+    // run the search function based on user selection
     switch(traitSelection){
       case 'gender':
         searchResults = searchByGender(people);
@@ -220,15 +225,19 @@ function pickTraitToSearch(number, people){
       case 'eye color':
         searchResults = searchByEyeColor(people);
         break;
+      
+      case 'occupation':
+        searchResults = searchByOccupation(people);
+        break;
     }
   }
-  // // if user picks more than 1 trait to search run this code
+  // // if user picks more than 1 trait to search this code runs
   else {
     for(let i = 0; i < number; i++){
       let traitSelection = promptFor("Select a Trait to search. Options are: 'gender', 'dob' (date of birth), " +
                           "'height', 'weight', 'eye color', or 'occupation'", traitsValidation);
 
-        // get search results and store in people array so next search only searches remaining objects
+        // get search results and store in people array so next search only searches remaining object/array
         if(traitSelection === 'gender'){
           searchResults = searchByGender(people);
           people = searchResults;
@@ -256,17 +265,19 @@ function pickTraitToSearch(number, people){
     }
   }
 
-     // display the users select trait search results
+     // display the trait search results
      displayListOfPeople(people);
 
   // restart the app and reset the data to entire data set
   return app(data); // ask again
 }
 
+// SPECIFIC TRAIT SEARCH FUNCTIONS
+
 //Search through an array of people to find matching first and last name and return a SINGLE person object.
 function searchByName(people){
   let firstName = promptFor("What is the person's first name?", firstNameValidation);
-  let lastName = promptFor("What is the person's last name?", autoValid);
+  let lastName = promptFor("What is the person's last name?", lastNameValidation);
 
   let foundPerson = people.filter(function(potentialMatch){
     if(potentialMatch.firstName === firstName && potentialMatch.lastName === lastName){
@@ -284,7 +295,7 @@ function searchByName(people){
 
 //search through an array of people to find matching eye colors.
 function searchByEyeColor(people){
-  let eyeColor = promptFor("What is the person's eye color?", autoValid);
+  let eyeColor = promptFor("What is the person's eye color?", eyeColorValidation);
 
   let foundEyeColor = people.filter(function(potentialMatch){
     if(potentialMatch.eyeColor === eyeColor){
@@ -314,7 +325,7 @@ function searchByGender(people){
 
 //find people by date of birth
 function searchByDOB(people){
-  let dOB = promptFor("What is the person's date of birth? (i.e. 2/19/1970)", autoValid);
+  let dOB = promptFor("What is the person's date of birth? (i.e. 2/19/1970)", dobValidation);
 
   let foundDOB = people.filter(function(potentialMatch){
     if(potentialMatch.dob === dOB){
@@ -329,7 +340,7 @@ function searchByDOB(people){
 
 // find people by occupation
 function searchByOccupation(people){
-  let occupation = promptFor("What is the person's occupation?", autoValid);
+  let occupation = promptFor("What is the person's occupation?", occupationValidation);
     
   let foundOccupation = people.filter(function(potentialMatch){
     if(potentialMatch.occupation === occupation){
@@ -342,24 +353,9 @@ function searchByOccupation(people){
   return foundOccupation;
 }
 
-// Find people based on their ID
-function searchById(people){
-  let personsId = promptFor("Enter an ID number:", autoValid);
-
-  // convert user input from string to number
-  let personsIdNumber = parseInt(personsId);
-
-  let possiblePerson = people.filter(function(potentialMatch){
-    if(potentialMatch.id === personsIdNumber){
-      return potentialMatch;
-    }
-  })
-  return possiblePerson;
-}
-
 // Find people based on their height
 function searchByHeight(people){
-  let personsHeight = promptFor("Enter a height (inches)", autoValid);
+  let personsHeight = promptFor("Enter a height (inches)", heightValidation);
 
   // convert user input from string to number
   let personsHeightNumber = parseInt(personsHeight);
@@ -374,7 +370,7 @@ function searchByHeight(people){
 
 // find someone based on their weight
 function searchByWeight(people){
-  let personsWeight = promptFor("Enter a weight (pounds)", autoValid);
+  let personsWeight = promptFor("Enter a weight (pounds)", weightValidation);
 
   // convert user input from string to number
   let personsWeightNumber = parseInt(personsWeight);
@@ -387,34 +383,16 @@ function searchByWeight(people){
   return foundWeight;
 }
 
-// Find someone using their Spouse's ID number
-function searchBySpouseId(people){
-  let personsSpouseId = promptFor("Enter a person's spouse ID number", autoValid);
-
-  // convert user input from string to number
-  let personsSpouseNumberId = parseInt(personsSpouseId);
-
-  // Filter through for matching spouse IDs but return the person you want, not the spouse
-  let potentialMatchNotSpouse = people.filter(function(potentialMatch){
-    if(potentialMatch.currentSpouse === personsSpouseNumberId){
-      // return the person you are searching for
-      return potentialMatch;
-    }
-
-  })
-  return potentialMatchNotSpouse;
-}
-
 // This function retrieves descendants of found person
 function getDescendants(person, people){
   let descendantsOnly = [];
-  //This loop goes through and finds all the first 
+  //This loop goes through and finds all the first descendants
   for(let i = 0; i < people.length; i++){
     if(people[i].parents.includes(person.id)){
       descendantsOnly.push(people[i]);
     }
   }
-  //this loop goes through descendantsOnly one by one
+  //this loop goes through descendantsOnly one by one to get the next level of descendants
   for(let j = 0; j < descendantsOnly.length; j++){
      descendantsOnly = descendantsOnly.concat(getDescendants(descendantsOnly[j], people))
   }
@@ -424,18 +402,10 @@ function getDescendants(person, people){
 //#endregion
 
 //Display functions.
-//Functions for user interface.
 /////////////////////////////////////////////////////////////////
-//#region 
+//#region
 
-// alerts a list of people
-// function displayListOfPeople(people){
-//   alert(people.map(function(person){
-//     return person.firstName + " " + person.lastName;
-//   }).join("\n"));
-// }
-
-// display a list of people
+// display a list of people from a search result
 function displayListOfPeople(people){
   let displayNames = "";
 
@@ -455,14 +425,21 @@ function displayListOfPeople(people){
     }
   }
 
-  let userResponse = promptFor(`${displayNamesText}${displayNames}` +
-                    `\nWould you like to go back 'yes' or 'no'?`, yesNo);
+  // display the appropriate message and results based on search results
+  let userResponse = "";
 
+  if(people.length === 0){
+      userResponse = promptFor("Your search did not return any results" +
+      "\n\nWould you like to go back 'yes' or 'no'?", yesNo);
+  }
+  else{
+      userResponse = promptFor(`${displayNamesText}${displayNames}` +
+                    `\n\nWould you like to go back 'yes' or 'no'?`, yesNo);
+  }
   //if user says 'yes', they will return to main menu prompt
   if(userResponse === "yes"){
     return pickOneOrFiveTraits(data);
   }
-
   //if user says 'no', they will exit prompt
   else if(userResponse === "no"){
     app(data);
@@ -471,7 +448,7 @@ function displayListOfPeople(people){
 
 function displayAllInfo(person, people){
   // print all of the information about a person and prompt next direction of search:
-     let infoResponse = promptFor(`${person.firstName} ${person.lastName}'s info: \nGender: ${person.gender} \nDate of Birth: ${person.dob} \nHeight: ${person.height} \nWeight: ${person.weight} \nEye color: ${person.eyeColor} \nOccupation: ${person.occupation} \nWould you like to go back 'yes' or 'no'?`, yesNo);
+     let infoResponse = promptFor(`${person.firstName} ${person.lastName}'s info: \nGender: ${person.gender} \nDate of Birth: ${person.dob} \nHeight: ${person.height} \nWeight: ${person.weight} \nEye color: ${person.eyeColor} \nOccupation: ${person.occupation} \n\nWould you like to go back 'yes' or 'no'?`, yesNo);
 
     //if user says 'yes', they will return to main menu prompt
      if(infoResponse === "yes"){
@@ -490,19 +467,28 @@ function displayDescendants(person, descendants){
   // display all at once variable
   let displayNames = "";
   // Descendants Phrase/Text
-  let displayDescendantsText = `${person.firstName} ${person.lastName}'s Descendants are:\n ` +
-                              `(Click 'Ok' after reviewing to go back to the previous menu.)\n\n`;
+  let displayDescendantsText = `${person.firstName} ${person.lastName}'s Descendants are:\n\n`;
 
   // loop through and display descendants all at once
   for(let i = 0; i < descendants.length; i++){
-    displayNames += `${descendants[i]}\n`;
+    displayNames += `${descendants[i].firstName} ${descendants[i].lastName}\n`;
   }
-  let userResponse = promptFor(`${displayDescendantsText}${displayNames}` +
-                    `\nWould you like to go back 'yes' or 'no'?`, yesNo);
   
+  // display the appropriate message and results based on search results
+  let userResponse = "";
+
+  if(descendants.length === 0){
+    userResponse = promptFor(`${person.firstName} ${person.lastName} does not have any descendants.` +
+                        `\n\nWould you like to go back 'yes' or 'no'?`, yesNo);
+  }
+  else{
+    userResponse = promptFor(`${displayDescendantsText}${displayNames}` +
+                    `\n\nWould you like to go back 'yes' or 'no'?`, yesNo);
+  }
+
   //if user says 'yes', they will return to main menu prompt
   if(userResponse === "yes"){
-    return mainMenu(person, people);
+    return mainMenu(person, data);
   }
 
   //if user says 'no', they will exit prompt
@@ -511,26 +497,9 @@ function displayDescendants(person, descendants){
   }
 }
 
-function displayFamily(person, spouse, parents, siblings){
-    //This prompt displays the person's family info and then asks if they would like to go back
-    let familyResponse = promptFor(`${person.firstName} ${person.lastName}'s family: \n` +
-                        ` Spouse: ${spouse.firstName} ${spouse.lastName} \nParent(s): ${parents} \n` +
-                        ` Siblings: ${siblings}\nWould you like to go back 'yes' or 'no'? `, yesNo);
-    
-    //if user says 'yes', they will return to main menu prompt
-    if(familyResponse === "yes"){
-        return mainMenu(person, people);
-    }
-
-    //if user says 'no', they will exit prompt
-    else if(familyResponse === "no"){
-        app(data);
-    }
-}
 //#endregion
 
 //Validation functions.
-//Functions to validate user input.
 /////////////////////////////////////////////////////////////////
 //#region 
 
@@ -561,14 +530,13 @@ function autoValid(input){
   return true; // default validation only
 }
 
-//Unfinished validation function you can use for any of your custom validation callbacks.
-
 // function to validate number of traits selection
 function numberOfTraitsValidation(input){
   input = parseInt(input);
   console.log(input);
-
-  if(input > 0 && input <= 6 ){
+  
+  // user must input a number from 1 - 5 only
+  if(input > 0 && input < 6 ){
     return true;
   }
   else{
@@ -579,7 +547,8 @@ function numberOfTraitsValidation(input){
 
 // function to validate traits entered by user
 function traitsValidation(input){
-  if(input === "gender" || input === "dob" || input === "height" || input === "weight" || input === "eye color"){
+  // user can only enter one of these traits
+  if(input === "gender" || input === "dob" || input === "height" || input === "weight" || input === "eye color" || input === "occupation"){
     return true;
   }
   else{
@@ -590,7 +559,7 @@ function traitsValidation(input){
 
 // function to validate displayOption prompt
 function displayOptionValidation(input){
-
+  // user must enter one of these display or command options
   if(input === "info" || input === "descendants" || input === "family" || input === "restart" || input === "quit"){
     return true;
   }
@@ -602,6 +571,7 @@ function displayOptionValidation(input){
 
 // gender input validation
 function genderValidation(input){
+  // user must enter either male or female gender only
   if(input === "male" || input === "female"){
     return true;
   }
@@ -613,6 +583,7 @@ function genderValidation(input){
 
 // validate firstName input
 function firstNameValidation(input){
+  // search the data set to see if there is a match for user input then exit the search once found
   let nameMatch = "";
   for(let i = 0; i < data.length; i++){
       if(input === data[i].firstName){
@@ -620,7 +591,7 @@ function firstNameValidation(input){
         break;
       }
   }
-
+  // find and return the boolean result back to where called
   if(input === nameMatch){
       return true;
   }
@@ -630,16 +601,124 @@ function firstNameValidation(input){
   }
 }
 
-function firstNameValidation(input){
+// validate last name input
+function lastNameValidation(input){
+  // search the data set to see if there is a match for user input then exit the search once found
   let nameMatch = "";
   for(let i = 0; i < data.length; i++){
-      if(input === data[i].firstName){
-        nameMatch = data[i].firstName;
+      if(input === data[i].lastName){
+        nameMatch = data[i].lastName;
         break;
       }
   }
-
+  // find and return the boolean result back to where called
   if(input === nameMatch){
+      return true;
+  }
+  else{
+    alert("Not a valid choice, please try again.");
+    return false;
+  }
+}
+
+// validate height input
+function heightValidation(input){
+  // convert input string to number
+  let heightNumber = parseInt(input);
+
+  // search the data set to see if there is a match for user input then exit the search once found
+  let heightMatch = 0;
+  for(let i = 0; i < data.length; i++){
+      if(heightNumber === data[i].height){
+        heightMatch = data[i].height;
+        break;
+      }
+  }
+  // find and return the boolean result back to where called
+  if(heightNumber === heightMatch){
+      return true;
+  }
+  else{
+    alert("Not a valid choice, please try again.");
+    return false;
+  }
+}
+
+// validate weight input
+function weightValidation(input){
+  // convert input string to number
+  let weightNumber = parseInt(input);
+
+  // search the data set to see if there is a match for user input then exit the search once found
+  let weightMatch = 0;
+  for(let i = 0; i < data.length; i++){
+      if(weightNumber === data[i].weight){
+        weightMatch = data[i].weight;
+        break;
+      }
+  }
+  // find and return the boolean result back to where called
+  if(weightNumber === weightMatch){
+      return true;
+  }
+  else{
+    alert("Not a valid choice, please try again.");
+    return false;
+  }
+}
+
+// validate last name input
+function eyeColorValidation(input){
+  // search the data set to see if there is a match for user input then exit the search once found
+  let eyeColorMatch = "";
+  for(let i = 0; i < data.length; i++){
+      if(input === data[i].eyeColor){
+        eyeColorMatch = data[i].eyeColor;
+        break;
+      }
+  }
+  // find and return the boolean result back to where called
+  if(input === eyeColorMatch){
+      return true;
+  }
+  else{
+    alert("Not a valid choice, please try again.");
+    return false;
+  }
+}
+
+// validate dob input
+function dobValidation(input){
+  // search the data set to see if there is a match for user input then exit the search once found
+  let dobMatch = "";
+  for(let i = 0; i < data.length; i++){
+      if(input === data[i].dob){
+        dobMatch = data[i].dob;
+        break;
+      }
+  }
+  // find and return the boolean result back to where called
+  if(input === dobMatch){
+      return true;
+  }
+  else{
+    alert("Not a valid choice, please try again.");
+    return false;
+  }
+}
+
+// validate occupation input
+function occupationValidation(input){
+  // search the data set to see if there is a match for user input then exit the search once found
+  let occupationMatch = "";
+  for(let i = 0; i < data.length; i++){
+      if(input === data[i].occupation){
+        occupationMatch = data[i].occupation;
+        break;
+      }
+  }
+  // find and return the boolean result back to where called
+  if(input === occupationMatch){
       return true;
   }
   else{
